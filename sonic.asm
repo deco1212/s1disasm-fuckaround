@@ -343,11 +343,22 @@ GameInit:
 .clearRAM:
 		move.l	d7,(a6)+
 		dbf	d6,.clearRAM	; clear RAM ($0000-$FDFF)
-
 		bsr.w	VDPSetupGame
-		bsr.w	DACDriverLoad
 		bsr.w	JoypadInit
 		move.b	#id_Title,(v_gamemode).w ; set Game Mode to Sega Screen
+
+        jsr     MegaPCM_LoadDriver
+        lea     SampleTable, a0
+        jsr     MegaPCM_LoadSampleTable
+        tst.w   d0                      ; was sample table loaded successfully?
+        beq.s   .SampleTableOk          ; if yes, branch
+        ifdef __DEBUG__
+            ; for MD Debugger v.2.5 or above
+            RaiseError "MegaPCM_LoadSampleTable returned %<.b d0>", MPCM_Debugger_LoadSampleTableException
+            else
+            illegal
+        endif
+.SampleTableOk:
 
 MainGameLoop:
 		move.b	(v_gamemode).w,d0 ; load Game Mode
@@ -627,8 +638,8 @@ VBla_00:
 
 .notPAL:
 		move.w	#1,(f_hbla_pal).w ; set HBlank flag
-		stopZ80
-		waitZ80
+		; killed
+		; killed
 		tst.b	(f_wtr_state).w	; is water above top of screen?
 		bne.s	.waterabove 	; if yes, branch
 
@@ -640,7 +651,7 @@ VBla_00:
 
 .waterbelow:
 		move.w	(v_hbla_hreg).w,(a5)
-		startZ80
+		; killed
 		bra.w	VBla_Music
 ; ===========================================================================
 
@@ -682,8 +693,8 @@ VBla_10:
 
 ; loc_C6E:
 VBla_08:
-		stopZ80
-		waitZ80
+		; killed
+		; killed
 		bsr.w	ReadJoypads
 		tst.b	(f_wtr_state).w
 		bne.s	.waterabove
@@ -706,7 +717,7 @@ VBla_08:
 		move.b	#0,(f_sonframechg).w
 
 .nochg:
-		startZ80
+		; killed
 		movem.l	(v_screenposx).w,d0-d7
 		movem.l	d0-d7,(v_screenposx_dup).w
 		movem.l	(v_fg_scroll_flags).w,d0-d1
@@ -740,13 +751,13 @@ Demo_Time:
 ; ===========================================================================
 
 VBla_0A:
-		stopZ80
-		waitZ80
+		; killed
+		; killed
 		bsr.w	ReadJoypads
 		writeCRAM	v_palette,0
 		writeVRAM	v_spritetablebuffer,vram_sprites
 		writeVRAM	v_hscrolltablebuffer,vram_hscroll
-		startZ80
+		; killed
 		bsr.w	PalCycle_SS
 		tst.b	(f_sonframechg).w ; has Sonic's sprite changed?
 		beq.s	.nochg		; if not, branch
@@ -764,8 +775,8 @@ VBla_0A:
 ; ===========================================================================
 
 VBla_0C:
-		stopZ80
-		waitZ80
+		; killed
+		; killed
 		bsr.w	ReadJoypads
 		tst.b	(f_wtr_state).w
 		bne.s	.waterabove
@@ -786,7 +797,7 @@ VBla_0C:
 		move.b	#0,(f_sonframechg).w
 
 .nochg:
-		startZ80
+		; killed
 		movem.l	(v_screenposx).w,d0-d7
 		movem.l	d0-d7,(v_screenposx_dup).w
 		movem.l	(v_fg_scroll_flags).w,d0-d1
@@ -812,13 +823,13 @@ VBla_12:
 ; ===========================================================================
 
 VBla_16:
-		stopZ80
-		waitZ80
+		; killed
+		; killed
 		bsr.w	ReadJoypads
 		writeCRAM	v_palette,0
 		writeVRAM	v_spritetablebuffer,vram_sprites
 		writeVRAM	v_hscrolltablebuffer,vram_hscroll
-		startZ80
+		; killed
 		tst.b	(f_sonframechg).w
 		beq.s	.nochg
 		writeVRAM	v_sgfx_buffer,ArtTile_Sonic*tile_size
@@ -836,8 +847,8 @@ VBla_16:
 
 
 sub_106E:
-		stopZ80
-		waitZ80
+		; killed
+		; killed
 		bsr.w	ReadJoypads
 		tst.b	(f_wtr_state).w ; is water above top of screen?
 		bne.s	.waterabove	; if yes, branch
@@ -850,7 +861,7 @@ sub_106E:
 .waterbelow:
 		writeVRAM	v_spritetablebuffer,vram_sprites
 		writeVRAM	v_hscrolltablebuffer,vram_hscroll
-		startZ80
+		; killed
 		rts
 ; End of function sub_106E
 
@@ -928,13 +939,13 @@ loc_119E:
 
 
 JoypadInit:
-		stopZ80
-		waitZ80
+		; killed
+		; killed
 		moveq	#$40,d0
 		move.b	d0,(z80_port_1_control+1).l	; init port 1 (joypad 1)
 		move.b	d0,(z80_port_2_control+1).l	; init port 2 (joypad 2)
 		move.b	d0,(z80_expansion_control+1).l	; init port 3 (expansion/extra)
-		startZ80
+		; killed
 		rts
 ; End of function JoypadInit
 
@@ -1056,30 +1067,6 @@ ClearScreen:
 
 		rts
 ; End of function ClearScreen
-
-; ---------------------------------------------------------------------------
-; Subroutine to load the DAC driver
-; ---------------------------------------------------------------------------
-
-; ||||||||||||||| S U B R O U T I N E |||||||||||||||||||||||||||||||||||||||
-
-; SoundDriverLoad:
-DACDriverLoad:
-		nop	
-		stopZ80
-		deassertZ80Reset
-		lea	(DACDriver).l,a0	; load DAC driver
-		lea	(z80_ram).l,a1		; target Z80 RAM
-		bsr.w	KosDec			; decompress
-		assertZ80Reset
-		nop	
-		nop	
-		nop	
-		nop	
-		deassertZ80Reset
-		startZ80
-		rts
-; End of function DACDriverLoad
 
 		include	"_inc/Queue Sound Routines.asm"
 		include	"_inc/PauseGame.asm"
@@ -2030,7 +2017,6 @@ GM_Title:
 		bsr.w	ClearPLC
 		bsr.w	PaletteFadeOut
 		disable_ints
-		bsr.w	DACDriverLoad
 		lea	(vdp_control_port).l,a6
 		move.w	#$8004,(a6)	; 8-colour mode
 		move.w	#$8200+(vram_fg>>10),(a6) ; set foreground nametable address
@@ -8153,7 +8139,9 @@ ObjPos_Null:	dc.b $FF, $FF, 0, 0, 0,	0
 		endm
 		endif
 
-SoundDriver:	include "s1.sounddriver.asm"
+SoundDriver:	include "MegaPCM.asm"                   ; ++ ADD THIS LINE
+                include "SampleTable.asm"               ; ++ ADD THIS LINE
+				include "s1.sounddriver.asm"
 
 ; end of 'ROM'
 		even
