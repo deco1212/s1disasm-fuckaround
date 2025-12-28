@@ -47,6 +47,7 @@ tile_size:	equ 8*8/2
 plane_size_64x32:	equ 64*32*2
 
 ; Game modes
+id_Sega:	equ ptr_GM_Sega-GameModeArray	; $00
 id_Title:	equ ptr_GM_Title-GameModeArray	; $04
 id_Demo:	equ ptr_GM_Demo-GameModeArray	; $08
 id_Level:	equ ptr_GM_Level-GameModeArray	; $0C

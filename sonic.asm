@@ -345,7 +345,7 @@ GameInit:
 		dbf	d6,.clearRAM	; clear RAM ($0000-$FDFF)
 		bsr.w	VDPSetupGame
 		bsr.w	JoypadInit
-		move.b	#id_Title,(v_gamemode).w ; set Game Mode to Sega Screen
+		move.b	#id_Sega,(v_gamemode).w ; set Game Mode to Sega Screen
 
         jsr     MegaPCM_LoadDriver
         lea     SampleTable, a0
@@ -371,6 +371,8 @@ MainGameLoop:
 ; ---------------------------------------------------------------------------
 
 GameModeArray:
+
+ptr_GM_Sega:	bra.w	GM_Sega	    ; Sega Screen ($00)
 
 ptr_GM_Title:	bra.w	GM_Title	; Title Screen ($04)
 
@@ -2006,6 +2008,213 @@ WaitForVBla:
 		include	"_incObj/sub CalcSqrt.asm"
 		endif
 		include	"_incObj/sub CalcAngle.asm"
+; ---------------------------------------------------------------------------
+
+
+
+; Sega screen
+
+
+; ---------------------------------------------------------------------------
+
+
+
+
+
+GM_Sega:
+
+
+		move.b	#bgm_Stop,d0
+
+
+		bsr.w	QueueSound2 ; stop music
+
+
+		bsr.w	ClearPLC
+
+
+		bsr.w	PaletteFadeOut
+
+
+		lea	(vdp_control_port).l,a6
+
+
+		move.w	#$8004,(a6)	; use 8-colour mode
+
+
+		move.w	#$8200+(vram_fg>>10),(a6) ; set foreground nametable address
+
+
+		move.w	#$8400+(vram_bg>>13),(a6) ; set background nametable address
+
+
+		move.w	#$8700,(a6)	; set background colour (palette entry 0)
+
+
+		move.w	#$8B00,(a6)	; full-screen vertical scrolling
+
+
+		clr.b	(f_wtr_state).w
+
+
+		disable_ints
+
+
+		disable_display
+
+
+		bsr.w	ClearScreen
+
+
+		locVRAM	ArtTile_Sega_Tiles*tile_size
+
+
+		lea	(Nem_SegaLogo).l,a0 ; load Sega logo patterns
+
+
+		bsr.w	NemDec
+
+
+		lea	(v_256x256&$FFFFFF).l,a1
+
+
+		lea	(Eni_SegaLogo).l,a0 ; load Sega logo mappings
+
+
+		move.w	#make_art_tile(ArtTile_Sega_Tiles,0,FALSE),d0
+
+
+		bsr.w	EniDec
+
+
+
+
+
+		copyTilemap	v_256x256&$FFFFFF,vram_bg+$510,24,8
+
+
+		copyTilemap	(v_256x256+24*8*2)&$FFFFFF,vram_fg,40,28
+
+
+
+
+
+		if Revision<>0
+
+
+			tst.b	(v_megadrive).w	; is console Japanese?
+
+
+			bmi.s	.loadpal
+
+
+			copyTilemap	(v_256x256+$A40)&$FFFFFF,vram_fg+$53A,3,2 ; hide "TM" with a white rectangle
+
+
+		endif
+
+
+
+
+
+.loadpal:
+
+
+		moveq	#palid_SegaBG,d0
+
+
+		bsr.w	PalLoad	; load Sega logo palette
+
+
+		move.w	#-$A,(v_pcyc_num).w
+
+
+		move.w	#0,(v_pcyc_time).w
+
+
+		move.w	#0,(v_pal_buffer+$12).w
+
+
+		move.w	#0,(v_pal_buffer+$10).w
+
+
+		enable_display
+
+
+
+
+
+Sega_WaitPal:
+
+
+		move.b	#2,(v_vbla_routine).w
+
+
+		bsr.w	WaitForVBla
+
+
+		bsr.w	PalCycle_Sega
+
+
+		bne.s	Sega_WaitPal
+
+
+
+
+
+		move.b	#sfx_Sega,d0
+
+
+		bsr.w	QueueSound2	; play "SEGA" sound
+
+
+		move.b	#$14,(v_vbla_routine).w
+
+
+		bsr.w	WaitForVBla
+
+
+		move.w	#30,(v_generictimer).w
+
+
+
+
+
+Sega_WaitEnd:
+
+
+		move.b	#2,(v_vbla_routine).w
+
+
+		bsr.w	WaitForVBla
+
+
+		tst.w	(v_generictimer).w
+
+
+		beq.s	Sega_GotoTitle
+
+
+		andi.b	#btnStart,(v_jpadpress1).w ; is Start button pressed?
+
+
+		beq.s	Sega_WaitEnd	; if not, branch
+
+
+
+
+
+Sega_GotoTitle:
+
+
+		move.b	#id_Title,(v_gamemode).w ; go to title screen
+
+
+		rts
+
+
+; ===========================================================================
+
 
 ; ---------------------------------------------------------------------------
 ; Title screen
@@ -2159,7 +2368,7 @@ Tit_MainLoop:
 		cmpi.w	#$1C00,d0	; has Sonic object passed $1C00 on x-axis?
 		blo.s	Tit_ChkRegion	; if not, branch
 
-		move.b	#id_Title,(v_gamemode).w ; go to Sega screen
+		move.b	#id_Sega,(v_gamemode).w ; go to Sega screen
 		rts
 ; ===========================================================================
 
@@ -2995,14 +3204,14 @@ Level_ChkDemo:
 		beq.s	Level_EndDemo	; if not, branch
 		cmpi.b	#id_Demo,(v_gamemode).w
 		beq.w	Level_MainLoop	; if mode is 8 (demo), branch
-		move.b	#id_Title,(v_gamemode).w ; go to Sega screen
+		move.b	#id_Sega,(v_gamemode).w ; go to Sega screen
 		rts
 ; ===========================================================================
 
 Level_EndDemo:
 		cmpi.b	#id_Demo,(v_gamemode).w
 		bne.s	Level_FadeDemo	; if mode is 8 (demo), branch
-		move.b	#id_Title,(v_gamemode).w ; go to Sega screen
+		move.b	#id_Sega,(v_gamemode).w ; go to Sega screen
 		tst.w	(f_demo).w	; is demo mode on & not ending sequence?
 		bpl.s	Level_FadeDemo	; if yes, branch
 		move.b	#id_Credits,(v_gamemode).w ; go to credits
@@ -3317,7 +3526,7 @@ SS_NormalExit:
 ; ===========================================================================
 
 SS_ToSegaScreen:
-		move.b	#id_Title,(v_gamemode).w ; goto Sega screen
+		move.b	#id_Sega,(v_gamemode).w ; goto Sega screen
 		rts
 
 		if Revision<>0
@@ -3743,7 +3952,7 @@ loc_4DF2:
 		bhs.s	Cont_MainLoop
 		tst.w	(v_generictimer).w
 		bne.w	Cont_MainLoop
-		move.b	#id_Title,(v_gamemode).w ; go to Sega screen
+		move.b	#id_Sega,(v_gamemode).w ; go to Sega screen
 		rts
 ; ===========================================================================
 
@@ -4151,7 +4360,7 @@ TryAg_MainLoop:
 		beq.s	TryAg_MainLoop
 
 TryAg_Exit:
-		move.b	#id_Title,(v_gamemode).w ; goto Sega screen
+		move.b	#id_Sega,(v_gamemode).w ; goto Sega screen
 		rts
 
 ; ===========================================================================
