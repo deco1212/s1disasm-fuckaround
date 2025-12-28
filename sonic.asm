@@ -113,8 +113,8 @@ loc_E0:
 	endif
 		dc.b "SEGA MEGA DRIVE " ; Hardware system ID (Console name)
 		dc.b "(C)SEGA 1991.APR" ; Copyright holder and release date (generally year)
-		dc.b "SONICENGINE                                     " ; Domestic name
-		dc.b "SONICENGINE                                     " ; International name
+		dc.b "SONIC THE HEDGEHOG - CANON                      " ; Domestic name
+		dc.b "SONIC THE HEDGEHOG - CANON                      " ; International name
 		if Revision=0
 		dc.b "GM 00001009-00"   ; Serial/version number (Rev 0)
 		else
@@ -2404,8 +2404,8 @@ Tit_EnterCheat:
 
 Tit_PlayRing:
 		move.b	#1,(a0,d1.w)	; activate cheat
-		move.b	#sfx_Ring,d0
-		bsr.w	QueueSound2	; play ring sound when code is entered
+        move.b  #$84, d0
+        jsr     MegaPCM_PlaySample
 		bra.s	Tit_CountC
 ; ===========================================================================
 
