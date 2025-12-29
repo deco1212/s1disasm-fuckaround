@@ -2,8 +2,8 @@
 ; ---------------------------------------------------------------
 SampleTable:
 	;			type			pointer		Hz
-	dcSample	TYPE_DPCM, 		Kick, 		8000				; $81
-	dcSample	TYPE_PCM,		Snare,		24000				; $82
+    dcSample    TYPE_PCM,       Kick,       22050               ; $81
+    dcSample    TYPE_PCM,       Snare,      22050               ; $82
 	dcSample	TYPE_DPCM, 		Timpani, 	7250				; $83
 	dcSample    TYPE_PCM,       Fairy,      0, FLAGS_SFX        ; $84
 	dcSample    TYPE_PCM,       Hiroshima,  0, FLAGS_SFX        ; $85
@@ -17,8 +17,8 @@ SampleTable:
 	dc.w	-1	; end marker
 
 ; ---------------------------------------------------------------
-	incdac	Kick, "sound/dac/kick.dpcm"
-	incdac	Snare, "sound/dac/snare.pcm"
+	incdac	Kick, "sound/dac/kick.wav"
+	incdac	Snare, "sound/dac/snare.wav"
 	incdac	Timpani, "sound/dac/timpani.dpcm"
 	incdac  Fairy, "sound/dac/fairy.wav"
 	incdac  Hiroshima, "sound/dac/hiroshima.wav"
