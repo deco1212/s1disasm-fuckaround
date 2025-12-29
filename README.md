@@ -1,11 +1,16 @@
-s1disasm_git
+s1disasm-fuckaround
 ============
 
-The very latest Sonic 1 Disassembly.
+this is literally where i do random shit in the sonic 1 disassembly for dopamine
 
-See: http://info.sonicretro.org/Disassemblies
+things i came up with idea wise
 
-DISCLAIMER:
-Any and all content presented in this repository is presented for informational and educational purposes only.
-Commercial usage is expressly prohibited. Sonic Retro claims no ownership of any code in these repositories.
-You assume any and all responsibility for using this content responsibly. Sonic Retro claims no responsibiliy or warranty.
+- an engine
+- random shit for research and learning
+- sonic 1 but it's accurate to the current lore
+- sonic 1 deco's retake
+- random shit for research and learning
+
+so yeah uhh
+this has no proper planning
+i just fuck around
