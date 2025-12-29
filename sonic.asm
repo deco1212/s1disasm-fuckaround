@@ -3014,7 +3014,8 @@ Level_BgmNotLZ4:
 Level_PlayBgm:
 		lea	(MusicList).l,a1 ; load music playlist
 		move.b	(a1,d0.w),d0
-		bsr.w	QueueSound1	; play music
+		move.b  #$85, d0
+        jsr     MegaPCM_PlaySample
 		move.b	#id_TitleCard,(v_titlecard).w ; load title card object
 
 Level_TtlCardLoop:
