@@ -34,8 +34,8 @@ Sonic_Main:	; Routine 0
 		move.b	#2,obPriority(a0)
 		move.b	#$18,obActWid(a0)
 		move.b	#4,obRender(a0)
-		move.w	#$600,(v_sonspeedmax).w ; Sonic's top speed
-		move.w	#$C,(v_sonspeedacc).w ; Sonic's acceleration
+		move.w	#$400,(v_sonspeedmax).w ; Sonic's top speed
+		move.w	#$20,(v_sonspeedacc).w ; Sonic's acceleration
 		move.w	#$80,(v_sonspeeddec).w ; Sonic's deceleration
 
 ; Obj01_Control:
@@ -995,10 +995,10 @@ Sonic_Jump:
 Sonic_JumpHeight:
 		tst.b	objoff_3C(a0)	; has Sonic jumped?
 		beq.s	.capyvel		; if not, just cap Y speed normally.
-		move.w	#-$400,d1		; set max jump height.
+		move.w	#-$200,d1		; set max jump height.
 		btst	#6,obStatus(a0)	; is Sonic underwater?
 		beq.s	.notunderwater	; if not, continue.
-		move.w	#-$200,d1		; set underwater jump height.
+		move.w	#-$100,d1		; set underwater jump height.
 
 .notunderwater:
 		cmp.w	obVelY(a0),d1	; get current y speed.
