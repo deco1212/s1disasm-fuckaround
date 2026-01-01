@@ -21,13 +21,13 @@ SndCE_Ring_Left_Speaker_Voices:
 	smpsVcAlgorithm     $04
 	smpsVcFeedback      $00
 	smpsVcUnusedBits    $00
-	smpsVcDetune        $04, $07, $07, $03
-	smpsVcCoarseFreq    $09, $07, $02, $07
+	smpsVcDetune        $07, $07, $07, $03
+	smpsVcCoarseFreq    $07, $07, $02, $07
 	smpsVcRateScale     $00, $00, $00, $00
 	smpsVcAttackRate    $1F, $1F, $1F, $1F
 	smpsVcAmpMod        $00, $00, $00, $00
-	smpsVcDecayRate1    $0D, $07, $0A, $07
-	smpsVcDecayRate2    $0B, $00, $0B, $00
+	smpsVcDecayRate1    $07, $07, $0A, $07
+	smpsVcDecayRate2    $00, $00, $0B, $00
 	smpsVcDecayLevel    $00, $01, $00, $01
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
 	smpsVcTotalLevel    $00, $23, $00, $23

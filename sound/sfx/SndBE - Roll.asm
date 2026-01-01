@@ -29,14 +29,14 @@ SndBE_Roll_Voices:
 	smpsVcAlgorithm     $04
 	smpsVcFeedback      $07
 	smpsVcUnusedBits    $00
-	smpsVcDetune        $00, $00, $04, $00
-	smpsVcCoarseFreq    $02, $02, $04, $00
-	smpsVcRateScale     $00, $00, $00, $00
+	smpsVcDetune        $00, $00, $04, $04
+	smpsVcCoarseFreq    $02, $02, $04, $04
+	smpsVcRateScale     $00, $00, $00, $01
 	smpsVcAttackRate    $15, $1F, $1F, $1F
-	smpsVcAmpMod        $00, $00, $00, $00
-	smpsVcDecayRate1    $00, $00, $1F, $00
-	smpsVcDecayRate2    $00, $00, $00, $00
-	smpsVcDecayLevel    $00, $00, $00, $00
+	smpsVcAmpMod        $00, $00, $00, $01
+	smpsVcDecayRate1    $00, $00, $1F, $1F
+	smpsVcDecayRate2    $00, $00, $00, $01
+	smpsVcDecayLevel    $00, $00, $00, $01
 	smpsVcReleaseRate   $0F, $0F, $0F, $0F
-	smpsVcTotalLevel    $00, $28, $00, $0D
+	smpsVcTotalLevel    $00, $28, $00, $01
 

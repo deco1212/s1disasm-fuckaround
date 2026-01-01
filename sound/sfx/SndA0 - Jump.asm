@@ -10,8 +10,8 @@ SndA0_Jump_Header:
 SndA0_Jump_PSG1:
 	smpsPSGvoice        $00
 	dc.b	nF2, $05
-	smpsModSet          $02, $01, $F8, $65
-	dc.b	nBb2, $15
+	smpsModSet          $01, $01, $F4, $65
+	dc.b	nBb2, $10
 	smpsStop
 
 ; Song seems to not use any FM voices
